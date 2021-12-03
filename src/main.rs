@@ -4,7 +4,8 @@ use std::error::Error;
 // Box<dyn Error>???
 fn main() -> Result<(), Box<dyn Error>> {
     //day1()
-    day2()
+    day2();
+    day2p2()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -135,6 +136,34 @@ fn parse_line(line: &str) -> (&str, i32) {
     let amount: i32 = parts[1].parse().unwrap();
 
     (command, amount)
+}
+
+fn day2p2() -> Result<(), Box<dyn Error>> {
+    let input: String = fs::read_to_string("aoc-day2-input.txt").unwrap();
+
+    // Split input into lines
+    let line_iterator = input.lines();
+
+    // Convert lines into command tuples (command, amount): (string, number)
+    let commands = line_iterator.map(parse_line);
+
+    // Fold commands into position state
+    let initial = (0, 0, 0); // Tuple of (horizontal, depth, aim)
+    let result = commands.fold(initial, |(h, d, a), (command, amount)| {
+        match command {
+            "forward" => (h + amount, d + a * amount, a),
+            "down" => (h, d, a + amount),
+            "up" => (h, d, a - amount),
+            _ => (h, d, a)
+        }
+    });
+
+    // Calculate result
+    let (horizontal, depth, aim) = result;
+    let final_result = horizontal * depth;
+    println!("Final horizontal position: {}, depth: {}, aim: {}, product: {}", horizontal, depth, aim, final_result);
+
+    Ok(())
 }
 
 ////////////////////////////////////////////////////////////////////////////////
