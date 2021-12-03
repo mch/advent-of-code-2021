@@ -3,7 +3,8 @@ use std::error::Error;
 
 // Box<dyn Error>???
 fn main() -> Result<(), Box<dyn Error>> {
-    day1()
+    //day1()
+    day2()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -12,7 +13,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 fn day1() -> Result<(), Box<dyn Error>> {
     // How can I clone a String inside a Result<String, io::Error>,
     // where io::Error doesn't implement Clone?
-    let input: String = fs::read_to_string("aoc-2021-puzzle1.txt").unwrap();
+    let input: String = fs::read_to_string("aoc-day1-input.txt").unwrap();
     let input1 = input.clone();
     let input2 = input.clone();
     let input3 = input.clone();
@@ -98,8 +99,42 @@ fn parse_lines(input: &str) -> Vec<u32>{
 // Day 2
 ////////////////////////////////////////////////////////////////////////////////
 
-fn day2() {
+fn day2() -> Result<(), Box<dyn Error>> {
+    let input: String = fs::read_to_string("aoc-day2-input.txt").unwrap();
 
+    // Split input into lines
+    let line_iterator = input.lines();
+
+    // Convert lines into command tuples (command, amount): (string, number)
+    let commands = line_iterator.map(parse_line);
+
+    // Fold commands into position state
+    let initial_position = (0, 0); // Tuple of (horizontal, depth)
+    let position = commands.fold(initial_position, |(h, d), (command, amount)| {
+        match command {
+            "forward" => (h + amount, d),
+            "down" => (h, d + amount),
+            "up" => (h, d - amount),
+            _ => (h, d)
+        }
+    });
+
+    // Calculate result
+    let (horizontal, depth) = position;
+    let result = horizontal * depth;
+    println!("Final horizontal position: {}, depth: {}, product: {}", horizontal, depth, result);
+
+    Ok(())
+}
+
+fn parse_line(line: &str) -> (&str, i32) {
+    let parts: Vec<&str> = line.split(' ').collect();
+    if parts.len() != 2 {return ("none", 0)}
+
+    let command: &str = parts[0];
+    let amount: i32 = parts[1].parse().unwrap();
+
+    (command, amount)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
