@@ -138,10 +138,52 @@ fn parse_line(line: &str) -> (&str, i32) {
     (command, amount)
 }
 
+#[derive(Copy, Clone)]
 struct SubmarineState {
     x_position: i32,
     depth: i32,
     aim: i32,
+}
+
+impl SubmarineState {
+    fn new() -> SubmarineState {
+        SubmarineState {
+            x_position: 0,
+            depth: 0,
+            aim: 0,
+        }
+    }
+
+    fn go_forward(&self, amount: i32) -> SubmarineState {
+        SubmarineState {
+            x_position: self.x_position + amount,
+            depth: self.depth + self.aim * amount,
+            ..*self
+        }
+    }
+
+    fn go_down(&self, amount: i32) -> SubmarineState {
+        SubmarineState {
+            aim: self.aim + amount,
+            ..*self
+        }
+    }
+
+    fn go_up(&self, amount: i32) -> SubmarineState {
+        SubmarineState {
+            aim: self.aim - amount,
+            ..*self
+        }
+    }
+
+    fn process_command(&self, command: SubmarineCommand) -> SubmarineState {
+        match command {
+            SubmarineCommand::Forward(amount) => self.go_forward(amount),
+            SubmarineCommand::Down(amount) => self.go_down(amount),
+            SubmarineCommand::Up(amount) => self.go_up(amount),
+            _ => *self
+        }
+    }
 }
 
 enum SubmarineCommand {
@@ -175,28 +217,9 @@ fn day2p2() -> Result<(), Box<dyn Error>> {
     });
 
     // Fold commands into position state
-    let initial: SubmarineState = SubmarineState {
-        x_position: 0,
-        depth: 0,
-        aim: 0,
-    };
+    let initial: SubmarineState = SubmarineState::new();
     let result = commands.fold(initial, |state, command| {
-        match command {
-            SubmarineCommand::Forward(amount) => SubmarineState {
-                x_position: state.x_position + amount,
-                depth: state.depth + state.aim * amount,
-                ..state
-            },
-            SubmarineCommand::Down(amount) => SubmarineState {
-                aim: state.aim + amount,
-                ..state
-            },
-            SubmarineCommand::Up(amount) => SubmarineState {
-                aim: state.aim - amount,
-                ..state
-            },
-            _ => state
-        }
+        state.process_command(command)
     });
 
     // Calculate result
