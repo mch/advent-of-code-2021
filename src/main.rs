@@ -138,6 +138,19 @@ fn parse_line(line: &str) -> (&str, i32) {
     (command, amount)
 }
 
+struct SubmarineState {
+    x_position: i32,
+    depth: i32,
+    aim: i32,
+}
+
+enum SubmarineCommand {
+    Forward,
+    Up,
+    Down,
+    None,
+}
+
 fn day2p2() -> Result<(), Box<dyn Error>> {
     let input: String = fs::read_to_string("aoc-day2-input.txt").unwrap();
 
@@ -148,18 +161,34 @@ fn day2p2() -> Result<(), Box<dyn Error>> {
     let commands = line_iterator.map(parse_line);
 
     // Fold commands into position state
-    let initial = (0, 0, 0); // Tuple of (horizontal, depth, aim)
-    let result = commands.fold(initial, |(h, d, a), (command, amount)| {
+    let initial: SubmarineState = SubmarineState {
+        x_position: 0,
+        depth: 0,
+        aim: 0,
+    };
+    let result = commands.fold(initial, |state, (command, amount)| {
         match command {
-            "forward" => (h + amount, d + a * amount, a),
-            "down" => (h, d, a + amount),
-            "up" => (h, d, a - amount),
-            _ => (h, d, a)
+            "forward" => SubmarineState {
+                x_position: state.x_position + amount,
+                depth: state.depth + state.aim * amount,
+                ..state
+            },
+            "down" => SubmarineState {
+                aim: state.aim + amount,
+                ..state
+            },
+            "up" => SubmarineState {
+                aim: state.aim - amount,
+                ..state
+            },
+            _ => state
         }
     });
 
     // Calculate result
-    let (horizontal, depth, aim) = result;
+    let horizontal = result.x_position;
+    let depth = result.depth;
+    let aim = result.aim;
     let final_result = horizontal * depth;
     println!("Final horizontal position: {}, depth: {}, aim: {}, product: {}", horizontal, depth, aim, final_result);
 
