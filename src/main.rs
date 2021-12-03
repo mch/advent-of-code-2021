@@ -145,9 +145,9 @@ struct SubmarineState {
 }
 
 enum SubmarineCommand {
-    Forward,
-    Up,
-    Down,
+    Forward(i32),
+    Up(i32),
+    Down(i32),
     None,
 }
 
@@ -157,8 +157,22 @@ fn day2p2() -> Result<(), Box<dyn Error>> {
     // Split input into lines
     let line_iterator = input.lines();
 
-    // Convert lines into command tuples (command, amount): (string, number)
-    let commands = line_iterator.map(parse_line);
+    // Convert lines into commands
+    let commands = line_iterator.map(|line| {
+        let parts: Vec<&str> = line.split(' ').collect();
+        if parts.len() != 2 { return SubmarineCommand::None }
+
+        let command = parts[1].parse().map(|amount| {
+            match parts[0] {
+                "forward" => SubmarineCommand::Forward(amount),
+                "up" => SubmarineCommand::Up(amount),
+                "down" => SubmarineCommand::Down(amount),
+                _ => SubmarineCommand::None,
+            }
+        }).unwrap_or(SubmarineCommand::None);
+
+        command
+    });
 
     // Fold commands into position state
     let initial: SubmarineState = SubmarineState {
@@ -166,18 +180,18 @@ fn day2p2() -> Result<(), Box<dyn Error>> {
         depth: 0,
         aim: 0,
     };
-    let result = commands.fold(initial, |state, (command, amount)| {
+    let result = commands.fold(initial, |state, command| {
         match command {
-            "forward" => SubmarineState {
+            SubmarineCommand::Forward(amount) => SubmarineState {
                 x_position: state.x_position + amount,
                 depth: state.depth + state.aim * amount,
                 ..state
             },
-            "down" => SubmarineState {
+            SubmarineCommand::Down(amount) => SubmarineState {
                 aim: state.aim + amount,
                 ..state
             },
-            "up" => SubmarineState {
+            SubmarineCommand::Up(amount) => SubmarineState {
                 aim: state.aim - amount,
                 ..state
             },
