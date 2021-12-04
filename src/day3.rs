@@ -48,12 +48,14 @@ pub fn puzzle1() -> Result<(), Box<dyn Error>> {
 
 pub fn puzzle2() -> Result<(), Box<dyn Error>> {
     let input: String = fs::read_to_string("aoc-day3-input.txt").unwrap();
-    let numbers = input.lines().map(|line| u32::from_str_radix(line, 2).unwrap());
+    let numbers = input.lines().map(|line| u32::from_str_radix(line, 2).unwrap()).collect();
 
     // life support rating: oxygen generator rating × CO₂ scrubber rating
+    let o2_generator = oxygen_generator_rating(&numbers);
+    let co2_scrubber = co2_scrubber_rating(&numbers);
+    let result = o2_generator * co2_scrubber;
 
-    // Consider first bit (MSB)
-    // oxygen generator rating bit criteria:
+    println!("o2 rating: {}, co2 rating: {}, result: {}", o2_generator, co2_scrubber, result);
 
     Ok(())
 }
@@ -82,6 +84,35 @@ fn count_bits(position: u32, numbers: &Vec<u32>) -> (u32, u32) {
         }
     }
     (zeros, ones)
+}
+
+enum PreferredBit {
+    MostCommon,
+    LeastCommon,
+}
+
+fn filter_by_bit_position(starting_position: u32, numbers: &Vec<u32>, preferred_bit: PreferredBit) -> u32 {
+    let mut position = starting_position;
+    let mut nums = numbers.clone();
+    while nums.len() > 1 {
+        let (num_zeros, num_ones) = count_bits(position, &nums);
+        let bit_to_keep = match preferred_bit {
+            PreferredBit::MostCommon => if num_zeros > num_ones { 0 } else { 1 },
+            PreferredBit::LeastCommon => if num_zeros <= num_ones { 0 } else { 1 },
+        };
+        nums = nums.into_iter().filter(|&x| x >> position & 1 == bit_to_keep).collect();
+        if position == 0 { break }
+        position = position - 1;
+    }
+    nums[0]
+}
+
+fn oxygen_generator_rating(numbers: &Vec<u32>) -> u32 {
+    filter_by_bit_position(11, numbers, PreferredBit::MostCommon)
+}
+
+fn co2_scrubber_rating(numbers: &Vec<u32>) -> u32 {
+    filter_by_bit_position(11, numbers, PreferredBit::LeastCommon)
 }
 
 #[cfg(test)]
@@ -121,17 +152,9 @@ mod tests {
 
     #[test]
     fn test_filtering() {
-        let mut numbers = parse_input(test_data);
-        println!("{:?}", numbers);
-        let mut position = 4;
-        while numbers.len() > 1 && position >= 0 {
-            let (num_zeros, num_ones) = count_bits(position, &numbers);
-            let potato = if num_zeros > num_ones { 0 } else { 1 };
-            numbers.drain_filter(|x| *x >> position & 1 != potato);
-            println!("{:?}", numbers);
-            position = position - 1;
-        }
-        ()
+        let numbers = parse_input(test_data);
+        assert_eq!(filter_by_bit_position(4, &numbers, PreferredBit::MostCommon), 23);
+        assert_eq!(filter_by_bit_position(4, &numbers, PreferredBit::LeastCommon), 10);
     }
 
     #[test]

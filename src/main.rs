@@ -1,5 +1,3 @@
-#![feature(drain_filter)]
-
 use std::error::Error;
 
 mod day1;
