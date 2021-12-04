@@ -1,3 +1,5 @@
+#![feature(drain_filter)]
+
 use std::error::Error;
 
 mod day1;
@@ -9,6 +11,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     //day1::day1()
     //day2::day2()
     //day2::day2p2()
-    day3::day3()
+    //day3::puzzle1()
+    day3::puzzle2()
 }
 
