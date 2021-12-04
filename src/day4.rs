@@ -2,7 +2,7 @@ use std::fs;
 use std::error::Error;
 
 pub fn puzzle1() -> Result<(), Box<dyn Error>> {
-    let input: String = fs::read_to_string("aoc-day4-input.txt").unwrap();
+    let input: String = fs::read_to_string("data/day4-input.txt").unwrap();
     load_input2(&input);
 
     Ok(())

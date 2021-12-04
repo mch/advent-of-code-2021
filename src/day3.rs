@@ -2,7 +2,7 @@ use std::fs;
 use std::error::Error;
 
 pub fn puzzle1() -> Result<(), Box<dyn Error>> {
-    let input: String = fs::read_to_string("aoc-day3-input.txt").unwrap();
+    let input: String = fs::read_to_string("data/day3-input.txt").unwrap();
 
     // Input:
     // 011110011110
@@ -47,7 +47,7 @@ pub fn puzzle1() -> Result<(), Box<dyn Error>> {
 }
 
 pub fn puzzle2() -> Result<(), Box<dyn Error>> {
-    let input: String = fs::read_to_string("aoc-day3-input.txt").unwrap();
+    let input: String = fs::read_to_string("data/day3-input.txt").unwrap();
     let numbers = input.lines().map(|line| u32::from_str_radix(line, 2).unwrap()).collect();
 
     // life support rating: oxygen generator rating × CO₂ scrubber rating

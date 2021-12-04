@@ -2,7 +2,7 @@ use std::fs;
 use std::error::Error;
 
 pub fn day2() -> Result<(), Box<dyn Error>> {
-    let input: String = fs::read_to_string("aoc-day2-input.txt").unwrap();
+    let input: String = fs::read_to_string("data/day2-input.txt").unwrap();
 
     // Split input into lines
     let line_iterator = input.lines();
@@ -95,7 +95,7 @@ enum SubmarineCommand {
 }
 
 pub fn day2p2() -> Result<(), Box<dyn Error>> {
-    let input: String = fs::read_to_string("aoc-day2-input.txt").unwrap();
+    let input: String = fs::read_to_string("data/day2-input.txt").unwrap();
 
     // Split input into lines
     let line_iterator = input.lines();
