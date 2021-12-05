@@ -1,7 +1,6 @@
 use std::fs;
-use std::error::Error;
 
-pub fn day2() -> Result<(), Box<dyn Error>> {
+pub fn day2() -> () {
     let input: String = fs::read_to_string("data/day2-input.txt").unwrap();
 
     // Split input into lines
@@ -25,8 +24,6 @@ pub fn day2() -> Result<(), Box<dyn Error>> {
     let (horizontal, depth) = position;
     let result = horizontal * depth;
     println!("Final horizontal position: {}, depth: {}, product: {}", horizontal, depth, result);
-
-    Ok(())
 }
 
 fn parse_line(line: &str) -> (&str, i32) {
@@ -94,7 +91,7 @@ enum SubmarineCommand {
     None,
 }
 
-pub fn day2p2() -> Result<(), Box<dyn Error>> {
+pub fn day2p2() -> () {
     let input: String = fs::read_to_string("data/day2-input.txt").unwrap();
 
     // Split input into lines
@@ -129,7 +126,5 @@ pub fn day2p2() -> Result<(), Box<dyn Error>> {
     let aim = result.aim;
     let final_result = horizontal * depth;
     println!("Final horizontal position: {}, depth: {}, aim: {}, product: {}", horizontal, depth, aim, final_result);
-
-    Ok(())
 }
 

@@ -1,7 +1,6 @@
 use std::fs;
-use std::error::Error;
 
-pub fn puzzle1_and_2() -> Result<(), Box<dyn Error>> {
+pub fn puzzle1_and_2() -> () {
     let input: String = fs::read_to_string("data/day4-input.txt").unwrap();
     let (numbers_to_call, mut boards) = load_input(&input);
 
@@ -10,9 +9,9 @@ pub fn puzzle1_and_2() -> Result<(), Box<dyn Error>> {
         for board in &mut boards {
             board.mark(&call);
             if board.winning() {
-                println!("Called number {}", call);
-                println!("Winning board: {:?}", board.data);
-                println!("Marks: {:?}", board.marks);
+                // println!("Called number {}", call);
+                // println!("Winning board: {:?}", board.data);
+                // println!("Marks: {:?}", board.marks);
                 let score = board.unmarked_sum() * call;
                 scores.push(score);
             }
@@ -23,12 +22,10 @@ pub fn puzzle1_and_2() -> Result<(), Box<dyn Error>> {
 
     println!("First board to win has a score of {}", scores[0]);
     println!("Last board to win has a score of {}", scores[scores.len() - 1]);
-
-    Ok(())
 }
 
 fn load_input(input: &str) -> (Vec<u32>, Vec<Board>) {
-    let mut lines = input.clone().lines();
+    let lines = input.clone().lines();
 
     let result = lines.fold(Accumulator {
         state: State::ReadNumbers,

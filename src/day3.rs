@@ -1,7 +1,6 @@
 use std::fs;
-use std::error::Error;
 
-pub fn puzzle1() -> Result<(), Box<dyn Error>> {
+pub fn puzzle1() -> () {
     let input: String = fs::read_to_string("data/day3-input.txt").unwrap();
 
     // Input:
@@ -22,8 +21,8 @@ pub fn puzzle1() -> Result<(), Box<dyn Error>> {
         }
     }
 
-    println!("count of zero bits: {:?}", zeros);
-    println!("count of one bits: {:?}", ones);
+    // println!("count of zero bits: {:?}", zeros);
+    // println!("count of one bits: {:?}", ones);
 
     // gamma rate is based on the most common bit
     // epsilon rate is based on the least common bit
@@ -37,16 +36,14 @@ pub fn puzzle1() -> Result<(), Box<dyn Error>> {
             gamma = gamma << 1;
             epsilon = (epsilon << 1) + 1;
         }
-        println!("index: {}, ones: {}, zeros: {}, gamma: {} ({:012b}), epsilon: {} ({:012b})",
-                 index, ones[index], zeros[index], gamma, gamma, epsilon, epsilon);
+        // println!("index: {}, ones: {}, zeros: {}, gamma: {} ({:012b}), epsilon: {} ({:012b})",
+        //          index, ones[index], zeros[index], gamma, gamma, epsilon, epsilon);
     }
 
     println!("Submarine power consumption: {}", gamma * epsilon);
-
-    Ok(())
 }
 
-pub fn puzzle2() -> Result<(), Box<dyn Error>> {
+pub fn puzzle2() -> () {
     let input: String = fs::read_to_string("data/day3-input.txt").unwrap();
     let numbers = input.lines().map(|line| u32::from_str_radix(line, 2).unwrap()).collect();
 
@@ -56,20 +53,6 @@ pub fn puzzle2() -> Result<(), Box<dyn Error>> {
     let result = o2_generator * co2_scrubber;
 
     println!("o2 rating: {}, co2 rating: {}, result: {}", o2_generator, co2_scrubber, result);
-
-    Ok(())
-}
-
-fn parse_line(line: &str) -> () {
-    println!("line: {}", line);
-    for (index, character) in line.chars().enumerate() {
-        println!("index: {}, char: {}", index, character);
-    }
-    ()
-}
-
-fn parse_input(input: &str) -> Vec<u32> {
-    input.lines().map(|line| u32::from_str_radix(line, 2).unwrap()).collect()
 }
 
 fn count_bits(position: u32, numbers: &Vec<u32>) -> (u32, u32) {
@@ -119,7 +102,7 @@ fn co2_scrubber_rating(numbers: &Vec<u32>) -> u32 {
 mod tests {
     use super::*;
 
-    const test_data: &str = "00100
+    const TEST_DATA: &str = "00100
 11110
 10110
 10111
@@ -140,9 +123,13 @@ mod tests {
         }
     }
 
+    fn parse_input(input: &str) -> Vec<u32> {
+        input.lines().map(|line| u32::from_str_radix(line, 2).unwrap()).collect()
+    }
+
     #[test]
     fn test_count_common_bit() {
-        let numbers = parse_input(test_data);
+        let numbers = parse_input(TEST_DATA);
         assert_eq!((7, 5), count_bits(0, &numbers));
         assert_eq!((5, 7), count_bits(1, &numbers));
         assert_eq!((4, 8), count_bits(2, &numbers));
@@ -152,7 +139,7 @@ mod tests {
 
     #[test]
     fn test_filtering() {
-        let numbers = parse_input(test_data);
+        let numbers = parse_input(TEST_DATA);
         assert_eq!(filter_by_bit_position(4, &numbers, PreferredBit::MostCommon), 23);
         assert_eq!(filter_by_bit_position(4, &numbers, PreferredBit::LeastCommon), 10);
     }

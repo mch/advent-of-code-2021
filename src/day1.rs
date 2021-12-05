@@ -1,7 +1,6 @@
 use std::fs;
-use std::error::Error;
 
-pub fn day1() -> Result<(), Box<dyn Error>> {
+pub fn day1() -> () {
     // How can I clone a String inside a Result<String, io::Error>,
     // where io::Error doesn't implement Clone?
     let input: String = fs::read_to_string("data/day1-input.txt").unwrap();
@@ -33,7 +32,7 @@ pub fn day1() -> Result<(), Box<dyn Error>> {
     let (ups, previous) = result;
     println!("fold result: ({}, {})", ups, previous);
 
-    Ok(())
+    ()
 }
 
 fn count_larger_measurements(input: String) -> u32 {
