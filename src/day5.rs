@@ -163,10 +163,19 @@ mod tests {
     fn day5_horizontal_segment_iterator() {
         let segment = LineSegment::new(Point::new(1,5), Point::new(3,5));
         let mut iterator = segment.iter();
-        println!("iterator: {:?}", iterator);
         assert_eq!(Some(Point::new(1,5)), iterator.next());
         assert_eq!(Some(Point::new(2,5)), iterator.next());
         assert_eq!(Some(Point::new(3,5)), iterator.next());
+        assert_eq!(None, iterator.next());
+    }
+
+    #[test]
+    fn day5_vertical_segment_iterator() {
+        let segment = LineSegment::new(Point::new(3,8), Point::new(3,10));
+        let mut iterator = segment.iter();
+        assert_eq!(Some(Point::new(3,8)), iterator.next());
+        assert_eq!(Some(Point::new(3,9)), iterator.next());
+        assert_eq!(Some(Point::new(3,10)), iterator.next());
         assert_eq!(None, iterator.next());
     }
 
