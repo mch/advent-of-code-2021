@@ -8,19 +8,38 @@ pub fn puzzle1() -> () {
     let segments: Vec<LineSegment> = input.lines()
         .map(|line| line.parse::<LineSegment>().unwrap())
         .collect();
-    println!("Segments: {:?}", segments);
+    //println!("Segments: {:?}", segments);
 
-    //let mut points = HashMap::new();
-    for segment in segments {
-        // if segment.is_horizontal() {
-            
-        // } else if segment.is_vertical() {
-            
-        // }
+    let mut points = HashMap::new();
+    for segment in segments.clone() {
+        if segment.is_axis_aligned() {
+            for point in segment.iter() {
+                let count = points.entry(point).or_insert(0);
+                *count += 1;
+            }
+        }
     }
+
+    println!("Number of axis aligned points known: {:?}", points.len());
+    println!("Number of axis aligned points with overlapping segments: {}",
+             points.iter().filter(|(_,v)| **v >= 2).count());
+
+    let mut points2 = HashMap::new();
+    for segment in segments {
+        if segment.is_axis_aligned() || segment.is_diagonal() {
+            for point in segment.iter() {
+                let count = points2.entry(point).or_insert(0);
+                *count += 1;
+            }
+        }
+    }
+
+    println!("Number of axis aligned or diagonal points known: {:?}", points2.len());
+    println!("Number of axis aligned or diagonal points with overlapping segments: {}",
+             points2.iter().filter(|(_,v)| **v >= 2).count());
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Hash)]
 struct Point {
     x: i32,
     y: i32
@@ -31,6 +50,14 @@ impl Point {
         Point { x, y }
     }
 }
+
+impl PartialEq for Point {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
+}
+
+impl Eq for Point {}
 
 impl FromStr for Point {
     type Err = ParseIntError;
@@ -58,6 +85,14 @@ impl LineSegment {
 
     fn iter(&self) -> LineSegmentIter {
         LineSegmentIter::new(self)
+    }
+
+    fn is_axis_aligned(&self) -> bool {
+        self.a.x == self.b.x || self.a.y == self.b.y
+    }
+
+    fn is_diagonal(&self) -> bool {
+        (self.b.x - self.a.x).abs() == (self.b.y - self.a.y).abs()
     }
 }
 
@@ -87,12 +122,11 @@ struct LineSegmentIter {
 impl LineSegmentIter {
     fn new(segment: &LineSegment) -> LineSegmentIter {
         // Only handling horizontal or vertical lines for now.
-        let direction = Point::new(segment.b.x - segment.a.x, segment.b.y - segment.a.y);
-        let magnitude = ((direction.x as f64).powi(2) + (direction.y as f64).powi(2)).sqrt();
-        let normed = Point::new(direction.x / magnitude as i32, direction.y / magnitude as i32);
+        let direction = Point::new((segment.b.x - segment.a.x).signum(),
+                                   (segment.b.y - segment.a.y).signum());
         LineSegmentIter {
             segment: *segment,
-            direction: normed,
+            direction,
             current: segment.a,
             done: false,
         }
@@ -160,6 +194,48 @@ mod tests {
     }
 
     #[test]
+    fn day5_horizontal_segment_is_axis_aligned() {
+        let segment = LineSegment::new(Point::new(1,5), Point::new(3,5));
+        assert_eq!(true, segment.is_axis_aligned());
+    }
+
+    #[test]
+    fn day5_vertical_segment_is_axis_aligned() {
+        let segment = LineSegment::new(Point::new(1,5), Point::new(1,0));
+        assert_eq!(true, segment.is_axis_aligned());
+    }
+
+    #[test]
+    fn day5_diagonal_segment_is_not_axis_aligned() {
+        let segment = LineSegment::new(Point::new(1,5), Point::new(2,6));
+        assert_eq!(false, segment.is_axis_aligned());
+    }
+
+    #[test]
+    fn day5_45_degree_segment_is_diagonal() {
+        let segment = LineSegment::new(Point::new(1,5), Point::new(2,6));
+        assert_eq!(true, segment.is_diagonal());
+    }
+
+    #[test]
+    fn day5_135_degree_segment_is_diagonal() {
+        let segment = LineSegment::new(Point::new(1,5), Point::new(0,6));
+        assert_eq!(true, segment.is_diagonal());
+    }
+
+    #[test]
+    fn day5_225_degree_segment_is_diagonal() {
+        let segment = LineSegment::new(Point::new(1,5), Point::new(0,4));
+        assert_eq!(true, segment.is_diagonal());
+    }
+
+    #[test]
+    fn day5_other_angled_segment_is_not_diagonal() {
+        let segment = LineSegment::new(Point::new(1,5), Point::new(10,4));
+        assert_eq!(false, segment.is_diagonal());
+    }
+
+    #[test]
     fn day5_horizontal_segment_iterator() {
         let segment = LineSegment::new(Point::new(1,5), Point::new(3,5));
         let mut iterator = segment.iter();
@@ -177,6 +253,54 @@ mod tests {
         assert_eq!(Some(Point::new(3,9)), iterator.next());
         assert_eq!(Some(Point::new(3,10)), iterator.next());
         assert_eq!(None, iterator.next());
+    }
+
+    #[test]
+    fn day5_diagonal_segment_iterator() {
+        let segment = LineSegment::new(Point::new(10,10), Point::new(12,12));
+        let mut iterator = segment.iter();
+        assert_eq!(Some(Point::new(10,10)), iterator.next());
+        assert_eq!(Some(Point::new(11,11)), iterator.next());
+        assert_eq!(Some(Point::new(12,12)), iterator.next());
+        assert_eq!(None, iterator.next());
+    }
+
+    #[test]
+    fn day5_diagonal2_segment_iterator() {
+        let segment = LineSegment::new(Point::new(10,10), Point::new(8,8));
+        let mut iterator = segment.iter();
+        assert_eq!(Some(Point::new(10,10)), iterator.next());
+        assert_eq!(Some(Point::new(9,9)), iterator.next());
+        assert_eq!(Some(Point::new(8,8)), iterator.next());
+        assert_eq!(None, iterator.next());
+    }
+
+    #[test]
+    fn day5_diagonal3_segment_iterator() {
+        let segment = LineSegment::new(Point::new(10,10), Point::new(12,8));
+        let mut iterator = segment.iter();
+        assert_eq!(Some(Point::new(10,10)), iterator.next());
+        assert_eq!(Some(Point::new(11,9)), iterator.next());
+        assert_eq!(Some(Point::new(12,8)), iterator.next());
+        assert_eq!(None, iterator.next());
+    }
+
+    #[test]
+    fn day5_diagonal4_segment_iterator() {
+        let segment = LineSegment::new(Point::new(10,10), Point::new(8,12));
+        let mut iterator = segment.iter();
+        assert_eq!(Some(Point::new(10,10)), iterator.next());
+        assert_eq!(Some(Point::new(9,11)), iterator.next());
+        assert_eq!(Some(Point::new(8,12)), iterator.next());
+        assert_eq!(None, iterator.next());
+    }
+
+    #[test]
+    fn day5_broken_diagonal_iterator() {
+        let segment = LineSegment::new(Point::new(274, 585), Point::new(651, 962));
+        let mut iterator = segment.iter();
+        assert_eq!(Some(Point::new(274, 585)), iterator.next());
+        assert_eq!(Some(Point::new(275, 586)), iterator.next());
     }
 
     // #[test]
