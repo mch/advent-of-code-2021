@@ -30,8 +30,8 @@ fn main() -> () {
         day_result.map_or_else(|e| {
             println!("'{}' is not a valid day of the month: {}", args[1], e);
         }, |day| {
-            if day > args.len() {
-                println!("That day hasn't been solved yet!");
+            if day > solutions.len() {
+                println!("Day {} hasn't been solved yet!", day);
             } else {
                 solutions[day]();
             }
