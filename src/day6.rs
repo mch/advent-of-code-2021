@@ -1,7 +1,4 @@
 use std::fs;
-use std::str::FromStr;
-use std::num::ParseIntError;
-use std::collections::HashMap;
 
 pub fn puzzle1() -> () {
     let input: String = fs::read_to_string("data/day6-input.txt").unwrap();
