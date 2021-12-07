@@ -17,13 +17,13 @@ fn fish_step(fishes: Vec<i32>) -> Vec<i32> {
 mod tests {
     use super::*;
 
-//     So, suppose you have a lanternfish with an internal timer value of 3:
-
-//     After one day, its internal timer would become 2.
-//     After another day, its internal timer would become 1.
-//     After another day, its internal timer would become 0.
-//     After another day, its internal timer would reset to 6, and it would create a new lanternfish with an internal timer of 8.
-//     After another day, the first lanternfish would have an internal timer of 5, and the second lanternfish would have an internal timer of 7.
+// So, suppose you have a lanternfish with an internal timer value of 3:
+//
+// [x] After one day, its internal timer would become 2.
+// [ ] After another day, its internal timer would become 1.
+// [ ] After another day, its internal timer would become 0.
+// [ ] After another day, its internal timer would reset to 6, and it would create a new lanternfish with an internal timer of 8.
+// [ ] After another day, the first lanternfish would have an internal timer of 5, and the second lanternfish would have an internal timer of 7.
 
 // A lanternfish that creates a new fish resets its timer to 6, not 7 (because 0 is included as a valid timer value). The new lanternfish starts with an internal timer of 8 and does not start counting down until the next day.
 
@@ -35,5 +35,16 @@ mod tests {
         fishes_timer = fish_step(fishes_timer);
 
         assert_eq!(2, fishes_timer[0]);
+    }
+
+    #[test]
+    fn day6_after_two_days_timer_becomes_1() {
+        let mut fishes_timer: Vec<i32> = Vec::new();
+        fishes_timer.push(3);
+
+        fishes_timer = fish_step(fishes_timer);
+        fishes_timer = fish_step(fishes_timer);
+
+        assert_eq!(1, fishes_timer[0]);
     }
 }
