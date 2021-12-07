@@ -9,8 +9,9 @@ pub fn puzzle1() -> () {
 }
 
 fn fish_step(fishes: Vec<i32>) -> Vec<i32> {
+    let timer = fishes[0] - 1;
     let mut fishes_timer = Vec::new();
-    fishes_timer.push(2);
+    fishes_timer.push(timer);
     fishes_timer
 }
 
