@@ -9,15 +9,17 @@ pub fn puzzle1() -> () {
 }
 
 fn fish_step(fishes: Vec<i32>) -> Vec<i32> {
-    let timer = fishes[0] - 1;
-    let mut fishes_timer = Vec::new();
-    if (timer < 0) {
-        fishes_timer.push(6);
-        fishes_timer.push(8);
-        return fishes_timer;
+    let mut fishes_timer_temp = Vec::new();
+    for fish_timer in fishes {
+        let timer = fish_timer - 1;
+        if (timer < 0) {
+            fishes_timer_temp.push(6);
+            fishes_timer_temp.push(8);
+        } else {
+            fishes_timer_temp.push(timer);    
+        }
     }
-    fishes_timer.push(timer);
-    fishes_timer
+    fishes_timer_temp
 }
 
 mod tests {
