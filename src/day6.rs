@@ -5,7 +5,26 @@ use std::collections::HashMap;
 
 pub fn puzzle1() -> () {
     let input: String = fs::read_to_string("data/day6-input.txt").unwrap();
+    let mut fish_timers: Vec<i32> = input.split(',')
+        .filter_map(|x| {
+            let result = x.parse::<i32>();
+            match result {
+                Ok(value) => Some(value),
+                Err(err) => {
+                    println!("Failed to parse '{}' as a number: {}", x, err);
+                    None
+                },
+            }
+        })
+        .collect();
 
+    // let mut fish_timers: Vec<i32> = vec!(3,4,3,1,2);
+
+    let days = 80;
+    for _ in 0..days {
+        fish_timers = fish_step(fish_timers);
+    }
+    println!("After {} days, there are {} fish.", days, fish_timers.len());
 }
 
 fn fish_step(fish_timers: Vec<i32>) -> Vec<i32> {
