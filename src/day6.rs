@@ -9,8 +9,9 @@ pub fn puzzle1() -> () {
 }
 
 fn fish_step(fishes: Vec<i32>) -> Vec<i32> {
-
-    Vec::new()   
+    let mut fishes_timer = Vec::new();
+    fishes_timer.push(2);
+    fishes_timer
 }
 
 mod tests {
@@ -27,12 +28,12 @@ mod tests {
 // A lanternfish that creates a new fish resets its timer to 6, not 7 (because 0 is included as a valid timer value). The new lanternfish starts with an internal timer of 8 and does not start counting down until the next day.
 
     #[test]
-    fn day6_one_fish() {
-        let mut fishes: Vec<i32> = Vec::new();
-        fishes.push(3);
+    fn day6_after_one_day_timer_would_become_2() {
+        let mut fishes_timer: Vec<i32> = Vec::new();
+        fishes_timer.push(3);
 
-        fishes = fish_step(fishes);
+        fishes_timer = fish_step(fishes_timer);
 
-        assert_eq!(2, fishes[0]);
+        assert_eq!(2, fishes_timer[0]);
     }
 }
