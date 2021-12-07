@@ -11,7 +11,7 @@ pub fn puzzle1() -> () {
     //println!("Segments: {:?}", segments);
 
     let mut points = HashMap::new();
-    for segment in segments.clone() {
+    for segment in &segments {
         if segment.is_axis_aligned() {
             for point in segment.iter() {
                 let count = points.entry(point).or_insert(0);
@@ -25,7 +25,7 @@ pub fn puzzle1() -> () {
              points.iter().filter(|(_,v)| **v >= 2).count());
 
     let mut points2 = HashMap::new();
-    for segment in segments {
+    for segment in &segments {
         if segment.is_axis_aligned() || segment.is_diagonal() {
             for point in segment.iter() {
                 let count = points2.entry(point).or_insert(0);

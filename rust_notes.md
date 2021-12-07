@@ -8,6 +8,31 @@ From the return type for `std::fs::read_to_string`.
 ## How can I clone a String inside a Result<String, io::Error>?
 where io::Error doesn't implement Clone?
 
+## Why can't I for loop over the same Vec twice without cloning?
+Oh, I can if I borrow, but I'm not totally understanding the syntax.
+
+```
+let v = vec!(1,2,3);
+for item in &v {
+   println!("{}", v);
+}
+
+for item in &v {
+   println!("{}", v);
+}
+```
+
+I guess I'm passing a reference to the vec to the for loop and so iterating over references to the contents of the vector?
+
+By default the IntoIterator produces an iterator by taking self by value, so the collection is consumed (values moved into the loop). But you can usually call `iter()` or `iter_mut()` to get iterators over references instead.
+
+The example above, `for item in &v`, is shorthand for calling `iter()` on the vector. 
+
+## What does IntoIterator mean? 
+I initially read this as "pipe the contents of something into an iterator", but it's actually "take this and make an iterator out of it", or "turn this into an iterator". 
+
+So types that implement IntoIterator can be made into an iterator.
+
 ## How does iterator mutability work?
 From day1, I don't understand why numbers_iter has to be mutable. Is it because next() mutates self? If so, how do for loops etc get away with it? Do they make mutable copies?
 
