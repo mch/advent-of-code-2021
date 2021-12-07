@@ -8,18 +8,24 @@ pub fn puzzle1() -> () {
 
 }
 
-fn fish_step(fishes: Vec<i32>) -> Vec<i32> {
-    let mut fishes_timer_temp = Vec::new();
-    for fish_timer in fishes {
+fn fish_step(fish_timers: Vec<i32>) -> Vec<i32> {
+    let mut new_fish_timers = Vec::new();
+    let mut number_of_new_fish = 0;
+    for fish_timer in fish_timers {
         let timer = fish_timer - 1;
-        if (timer < 0) {
-            fishes_timer_temp.push(6);
-            fishes_timer_temp.push(8);
+        if timer < 0 {
+            new_fish_timers.push(6);
+            number_of_new_fish += 1;
         } else {
-            fishes_timer_temp.push(timer);    
+            new_fish_timers.push(timer);    
         }
     }
-    fishes_timer_temp
+
+    for _ in 0..number_of_new_fish {
+        new_fish_timers.push(8);
+    }
+
+    new_fish_timers
 }
 
 mod tests {
@@ -95,5 +101,16 @@ mod tests {
         assert_eq!(2, fishes_timer.len());
         assert_eq!(5, fishes_timer[0]);
         assert_eq!(7, fishes_timer[1]);
+    }
+
+    #[test]
+    fn day6_full_simulation() {
+        let mut fishes_timer: Vec<i32> = vec!(3,4,3,1,2);
+
+        for _ in 0..2 {
+            fishes_timer = fish_step(fishes_timer);
+        }
+
+        assert_eq!(vec!(1,2,1,6,0,8), fishes_timer);
     }
 }
