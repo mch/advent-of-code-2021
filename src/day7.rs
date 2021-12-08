@@ -14,7 +14,7 @@ pub fn puzzle() {
 fn align_to_position(position: i32, crab_positions: &Vec<i32>) -> i32 {
     let mut fuel_used = 0;
     for crab_position in crab_positions {
-        fuel_used += puzzle_1_fuel_cost(position, *crab_position);
+        fuel_used += puzzle_2_fuel_cost(position, *crab_position);
     }
     fuel_used
 }
