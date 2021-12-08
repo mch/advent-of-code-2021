@@ -85,3 +85,12 @@ I've included the prefix `test_` but it seems redundant given the `#[test]` anno
 ## When implementing an iterator, how should it connect to it's parent?
 Keeping in mind lifetimes, etc... the natural thing might be to attempt to store a reference to the parent in the iter struct, but what if the iter lives longer than the thing it is iterating over?
 
+## Whats the difference between `use` and `mod` and how should they be used?
+I was confused about main.rs bringing in local modules using `mod` and modules from std using `use`. It seems
+to me like `mod` declares a module, but if that's the case why isn't the `mod` keyword used in the file where 
+the module lives, and `use` used where the module is imported?
+
+## How do I make best make a vector of Strings?
+`Vec<String>` is fine for the declaration, but then `vec!["foo"]` doesn't work because `"foo"` is not a `String`, but rather a `&str`. If I try `Vec<&str>` it fails to compile because it needs a lifetime parameter which I haven't learned about yet. 
+
+## What is the difference between String and str, and how do they relate?

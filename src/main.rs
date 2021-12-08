@@ -7,6 +7,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 
 fn main() -> () {
     let mut solutions: Vec<Box<dyn Fn() -> ()>> = Vec::new();
@@ -18,6 +19,7 @@ fn main() -> () {
     solutions.push(Box::new(day5::puzzle1));
     solutions.push(Box::new(day6::puzzle1));
     solutions.push(Box::new(day7::puzzle));
+    solutions.push(Box::new(day8::puzzle));
 
     let args: Vec<String> = env::args().collect();
     if args.len() == 1 {
