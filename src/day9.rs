@@ -6,11 +6,11 @@ fn low_points(heightmap: &Vec<i32>, number_columns: usize) -> Vec<i32> {
 
     let max_column = number_columns - 1;
     let max_row = heightmap.len() / number_columns - 1;
-    println!("heightmap size: {}x{}", max_row + 1, max_column + 1);
+    //println!("heightmap size: {}x{}", max_row + 1, max_column + 1);
     for (index, point) in heightmap.iter().enumerate() {
         let column = index % number_columns;
         let row = index / number_columns;
-        println!("index {}, position {}x{}, point {}", index, row, column, point);
+        //println!("index {}, position {}x{}, point {}", index, row, column, point);
         let mut lower_than_neighbours = true;
 
         // left
@@ -108,4 +108,14 @@ mod tests {
         assert_eq!(vec![0], low_points(&heightmap, number_columns));
     }
 
+    #[test]
+    fn day9_example() {
+        let heightmap = vec![2, 1, 9, 9, 9, 4, 3, 2, 1, 0,
+                             3, 9, 8, 7, 8, 9, 4, 9, 2, 1,
+                             9, 8, 5, 6, 7, 8, 9, 8, 9, 2,
+                             8, 7, 6, 7, 8, 9, 6, 7, 8, 9,
+                             9, 8, 9, 9, 9, 6, 5, 6, 7, 8];
+        let number_columns = 10;
+        assert_eq!(vec![1, 0, 5, 5], low_points(&heightmap, number_columns));
+    }
 }
