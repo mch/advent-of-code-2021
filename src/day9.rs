@@ -9,15 +9,18 @@ pub fn puzzle() {
     // let heightmap = lines.iter()
     //     .map(|line| line.trim().chars()
     //          .map(|c| c.to_string().parse::<i32>().unwrap()).collect()).collect();
-    let mut heightmap: Vec<i32> = Vec::new();
+    let mut heightmap_data: Vec<i32> = Vec::new();
     for line in lines {
         for character in line.trim().chars() {
-            heightmap.push(character.to_string().parse().unwrap());
+            heightmap_data.push(character.to_string().parse().unwrap());
         }
     }
-    let low_points = low_points(&heightmap, number_columns);
+    let heightmap: Heightmap = Heightmap::new(&heightmap_data, number_columns);
+    let low_points = low_points(&heightmap_data, number_columns);
     println!("Low points: {:?}", low_points);
-    let risk_levels: Vec<i32> = low_points.iter().map(|p| p.value + 1).collect();
+    let values: Vec<i32> = heightmap.point_values(&low_points);
+    println!("values: {:?}", values);
+    let risk_levels: Vec<i32> = values.iter().map(|value| value + 1).collect();
     let risk_level_sum: i32 = risk_levels.iter().sum();
     println!("risk levels: {:?}", risk_levels);
     println!("risk level sum: {}", risk_level_sum);
@@ -105,8 +108,8 @@ fn low_points(heightmap: &Vec<i32>, number_columns: usize) -> Vec<Point> {
 
         if lower_than_neighbours {
             low_points.push(Point {
-                x: row,
-                y: column,
+                x: column,
+                y: row,
                 value: *point,
             });
         }
