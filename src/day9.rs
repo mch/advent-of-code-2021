@@ -46,6 +46,8 @@ struct Heightmap {
 
 impl Heightmap {
     fn new(data: &Vec<i32>, number_columns: usize) -> Heightmap {
+        // What should new do if the inputs are inconsistent? E.g. data doesn't have enough points
+        // To make a complete number of rows, or is empty?
         Heightmap {
             data: data.clone(),
             width: number_columns,
@@ -54,13 +56,17 @@ impl Heightmap {
     }
 
     // Should probably return an Option, for out of bounds points
-    fn index(self: &Heightmap, point: Point) -> usize {
+    fn index(self: &Heightmap, point: &Point) -> usize {
         point.x + point.y * self.width
     }
 
     // Should probably return an Option, for out of bounds points
-    fn value(self: &Heightmap, point: Point) -> i32 {
+    fn value(self: &Heightmap, point: &Point) -> i32 {
         self.data[self.index(point)]
+    }
+
+    fn point_values(self: &Heightmap, points: &Vec<Point>) -> Vec<i32> {
+        points.iter().map(|point| self.value(point)).collect()
     }
 
 }
@@ -224,10 +230,10 @@ mod tests {
                                   9, 8, 9, 9, 9, 6, 5, 6, 7, 8];
         let number_columns = 10;
         let heightmap: Heightmap = Heightmap::new(&heightmap_data, number_columns);
-        assert_eq!(0, heightmap.index(Point::new(0, 0, 0)));
-        assert_eq!(1, heightmap.index(Point::new(1, 0, 0)));
-        assert_eq!(10, heightmap.index(Point::new(0, 1, 0)));
-        assert_eq!(11, heightmap.index(Point::new(1, 1, 0)));
+        assert_eq!(0, heightmap.index(&Point::new(0, 0, 0)));
+        assert_eq!(1, heightmap.index(&Point::new(1, 0, 0)));
+        assert_eq!(10, heightmap.index(&Point::new(0, 1, 0)));
+        assert_eq!(11, heightmap.index(&Point::new(1, 1, 0)));
     }
 
     #[test]
@@ -239,9 +245,25 @@ mod tests {
                                   9, 8, 9, 9, 9, 6, 5, 6, 7, 8];
         let number_columns = 10;
         let heightmap: Heightmap = Heightmap::new(&heightmap_data, number_columns);
-        assert_eq!(2, heightmap.value(Point::new(0, 0, 0)));
-        assert_eq!(1, heightmap.value(Point::new(1, 0, 0)));
-        assert_eq!(3, heightmap.value(Point::new(0, 1, 0)));
-        assert_eq!(9, heightmap.value(Point::new(1, 1, 0)));
+        assert_eq!(2, heightmap.value(&Point::new(0, 0, 0)));
+        assert_eq!(1, heightmap.value(&Point::new(1, 0, 0)));
+        assert_eq!(3, heightmap.value(&Point::new(0, 1, 0)));
+        assert_eq!(9, heightmap.value(&Point::new(1, 1, 0)));
+    }
+
+    #[test]
+    fn day9_heightmap_point_values() {
+        let heightmap_data = vec![2, 1, 9, 9, 9, 4, 3, 2, 1, 0,
+                                  3, 9, 8, 7, 8, 9, 4, 9, 2, 1,
+                                  9, 8, 5, 6, 7, 8, 9, 8, 9, 2,
+                                  8, 7, 6, 7, 8, 9, 6, 7, 8, 9,
+                                  9, 8, 9, 9, 9, 6, 5, 6, 7, 8];
+        let number_columns = 10;
+        let heightmap: Heightmap = Heightmap::new(&heightmap_data, number_columns);
+        let points: Vec<Point> = vec![Point::new(0, 0, 0),
+                                      Point::new(1, 0, 0),
+                                      Point::new(0, 1, 0),
+                                      Point::new(1, 1, 0)];
+        assert_eq!(vec![2, 1, 3, 9], heightmap.point_values(&points));
     }
 }
