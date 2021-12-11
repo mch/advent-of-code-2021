@@ -26,7 +26,7 @@ pub fn puzzle() {
     println!("risk level sum: {}", risk_level_sum);
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 struct Point {
     x: usize,
     y: usize,
@@ -91,6 +91,28 @@ impl Heightmap {
         neighbours
     }
 
+    fn basin(self: &Heightmap, point: &Point) -> Vec<Point> {
+        let mut basin: Vec<Point> = Vec::new();
+
+        let mut points: Vec<Point> = self.neighbours(point);
+        while points.len() > 0 { // can i while points.pop matches Some?
+            let point = points.pop().unwrap();
+            if self.value(&point) < 9 {
+
+                if !basin.contains(&point) {
+                    basin.push(point);
+                }
+
+                for neighbour in self.neighbours(&point) {
+                    if !basin.contains(&neighbour) {
+                        points.push(neighbour);
+                    }
+                }
+            }
+        }
+
+        basin
+    }
 }
 
 fn low_points(heightmap: &Vec<i32>, number_columns: usize) -> Vec<Point> {
@@ -135,16 +157,6 @@ fn low_points(heightmap: &Vec<i32>, number_columns: usize) -> Vec<Point> {
     }
 
     low_points
-}
-
-fn find_basin(heightmap: &Heightmap, point: &Point) -> Vec<Point> {
-    let points_in_basin: Vec<Point> = Vec::new();
-
-    points_in_basin
-}
-
-fn basin_size(heightmap: &Vec<i32>, number_columns: usize, point: &Point) -> i32 {
-    0
 }
 
 mod tests {
@@ -240,9 +252,25 @@ mod tests {
         let heightmap: Heightmap = Heightmap::new(&heightmap_data, number_columns);
         let points: Vec<Point> = low_points(&heightmap_data, number_columns);
         assert_eq!(vec![1, 0, 5, 5], values(&points));
-        assert_eq!(vec![Point::new(0, 0, 2), Point::new(1, 0, 1), Point::new(0, 1, 3)],
-                   find_basin(&heightmap, &points[0]));
+
+        assert_eq!(vec![Point::new(0, 0, 0), Point::new(0, 1, 0), Point::new(1, 0, 0)],
+                   heightmap.basin(&points[0]));
+
+        assert_eq!(vec![Point { x: 9, y: 1, value: 0 },
+                        Point { x: 9, y: 2, value: 0 },
+                        Point { x: 9, y: 0, value: 0 },
+                        Point { x: 8, y: 0, value: 0 },
+                        Point { x: 8, y: 1, value: 0 },
+                        Point { x: 7, y: 0, value: 0 },
+                        Point { x: 6, y: 0, value: 0 },
+                        Point { x: 6, y: 1, value: 0 },
+                        Point { x: 5, y: 0, value: 0 }],
+                   heightmap.basin(&points[1]));
+
+        assert_eq!(14, heightmap.basin(&points[2]).len());
+        assert_eq!(9, heightmap.basin(&points[3]).len());
     }
+
     #[test]
     fn day9_heightmap_point_index() {
         let heightmap_data = vec![2, 1, 9, 9, 9, 4, 3, 2, 1, 0,

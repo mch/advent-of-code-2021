@@ -106,3 +106,6 @@ E.g. day9, Heightmap... the list of points might not be valid, e.g. not enough p
 In day9, while writing Heightmap, I added lots of small functions and unit tests for them in the interest of taking small steps. But many of these functions should not be part of the higher level Heightmap interface. Should I make them private and remove the unit tests?
 
 Or perhaps extract a more generic struct that Heightmap uses internally to provide it's higher level abstraction. This is probably the right choice.
+
+## Is there a way to assert the contents of a list, without caring about order?
+Maybe just use a set type?
