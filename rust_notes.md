@@ -75,6 +75,10 @@ Seems like it's all based on the function name, no nesting like you get with `de
 ## Is there a way to set up test fixtures?
 `before_each`, `after_each`, etc?
 
+The lack of fixtures became kind of annoying in day9, where I wanted to used the same data across multiple tests, but not all tests.
+
+Maybe the right answer is to just use tools provided by the language. Call a function that returns a struct with the constructed test data in it, and destructure it to extract the parts needed for an individual test. 
+
 ## What is the convention for naming test functions? 
 I've included the prefix `test_` but it seems redundant given the `#[test]` annotation.
 
@@ -94,3 +98,11 @@ the module lives, and `use` used where the module is imported?
 `Vec<String>` is fine for the declaration, but then `vec!["foo"]` doesn't work because `"foo"` is not a `String`, but rather a `&str`. If I try `Vec<&str>` it fails to compile because it needs a lifetime parameter which I haven't learned about yet. 
 
 ## What is the difference between String and str, and how do they relate?
+
+## What should constructors do if they are given data that can't construct a valid object?
+E.g. day9, Heightmap... the list of points might not be valid, e.g. not enough points to have N complete rows.
+
+## Should I delete tests that outlive they value?
+In day9, while writing Heightmap, I added lots of small functions and unit tests for them in the interest of taking small steps. But many of these functions should not be part of the higher level Heightmap interface. Should I make them private and remove the unit tests?
+
+Or perhaps extract a more generic struct that Heightmap uses internally to provide it's higher level abstraction. This is probably the right choice.

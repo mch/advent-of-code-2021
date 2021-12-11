@@ -72,6 +72,25 @@ impl Heightmap {
         points.iter().map(|point| self.value(point)).collect()
     }
 
+    fn neighbours(self: &Heightmap, point: &Point) -> Vec<Point> {
+        let mut neighbours: Vec<Point> = Vec::new();
+
+        if point.x > 0 {
+            neighbours.push(Point::new(point.x - 1, point.y, 0));
+        }
+        if point.x < self.width - 1 {
+            neighbours.push(Point::new(point.x + 1, point.y, 0));
+        }
+        if point.y > 0 {
+            neighbours.push(Point::new(point.x, point.y - 1, 0));
+        }
+        if point.y < self.height - 1 {
+            neighbours.push(Point::new(point.x, point.y + 1, 0));
+        }
+
+        neighbours
+    }
+
 }
 
 fn low_points(heightmap: &Vec<i32>, number_columns: usize) -> Vec<Point> {
@@ -254,8 +273,7 @@ mod tests {
         assert_eq!(9, heightmap.value(&Point::new(1, 1, 0)));
     }
 
-    #[test]
-    fn day9_heightmap_point_values() {
+    fn test_data() -> Heightmap {
         let heightmap_data = vec![2, 1, 9, 9, 9, 4, 3, 2, 1, 0,
                                   3, 9, 8, 7, 8, 9, 4, 9, 2, 1,
                                   9, 8, 5, 6, 7, 8, 9, 8, 9, 2,
@@ -263,10 +281,27 @@ mod tests {
                                   9, 8, 9, 9, 9, 6, 5, 6, 7, 8];
         let number_columns = 10;
         let heightmap: Heightmap = Heightmap::new(&heightmap_data, number_columns);
+        heightmap
+    }
+
+    #[test]
+    fn day9_heightmap_point_values() {
+        let heightmap = test_data();
         let points: Vec<Point> = vec![Point::new(0, 0, 0),
                                       Point::new(1, 0, 0),
                                       Point::new(0, 1, 0),
                                       Point::new(1, 1, 0)];
         assert_eq!(vec![2, 1, 3, 9], heightmap.point_values(&points));
+    }
+
+    #[test]
+    fn day9_heightmap_neighbours() {
+        let heightmap = test_data();
+        assert_eq!(vec![Point::new(1, 0, 0), Point::new(0, 1, 0)],
+                   heightmap.neighbours(&Point::new(0,0,0)));
+        assert_eq!(vec![Point::new(8, 4, 0), Point::new(9, 3, 0)],
+                   heightmap.neighbours(&Point::new(9,4,0)));
+        assert_eq!(vec![Point::new(4, 2, 0), Point::new(6, 2, 0), Point::new(5, 1, 0), Point::new(5, 3, 0)],
+                   heightmap.neighbours(&Point::new(5,2,0)));
     }
 }
