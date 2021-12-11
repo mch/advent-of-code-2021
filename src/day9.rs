@@ -52,6 +52,12 @@ impl Heightmap {
             height: data.len() / number_columns
         }
     }
+
+    // Should probably return an Option, for out of bounds points
+    fn index(self: &Heightmap, point: Point) -> usize {
+        point.x + point.y * self.width
+    }
+
 }
 
 fn low_points(heightmap: &Vec<i32>, number_columns: usize) -> Vec<Point> {
@@ -204,4 +210,19 @@ mod tests {
         assert_eq!(vec![Point::new(0, 0, 2), Point::new(1, 0, 1), Point::new(0, 1, 3)],
                    find_basin(&heightmap, &points[0]));
     }
+    #[test]
+    fn day9_heightmap_point_index() {
+        let heightmap_data = vec![2, 1, 9, 9, 9, 4, 3, 2, 1, 0,
+                                  3, 9, 8, 7, 8, 9, 4, 9, 2, 1,
+                                  9, 8, 5, 6, 7, 8, 9, 8, 9, 2,
+                                  8, 7, 6, 7, 8, 9, 6, 7, 8, 9,
+                                  9, 8, 9, 9, 9, 6, 5, 6, 7, 8];
+        let number_columns = 10;
+        let heightmap: Heightmap = Heightmap::new(&heightmap_data, number_columns);
+        assert_eq!(0, heightmap.index(Point::new(0, 0, 0)));
+        assert_eq!(1, heightmap.index(Point::new(1, 0, 0)));
+        assert_eq!(10, heightmap.index(Point::new(0, 1, 0)));
+        assert_eq!(11, heightmap.index(Point::new(1, 1, 0)));
+    }
+
 }
