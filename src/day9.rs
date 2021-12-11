@@ -58,6 +58,11 @@ impl Heightmap {
         point.x + point.y * self.width
     }
 
+    // Should probably return an Option, for out of bounds points
+    fn value(self: &Heightmap, point: Point) -> i32 {
+        self.data[self.index(point)]
+    }
+
 }
 
 fn low_points(heightmap: &Vec<i32>, number_columns: usize) -> Vec<Point> {
@@ -225,4 +230,18 @@ mod tests {
         assert_eq!(11, heightmap.index(Point::new(1, 1, 0)));
     }
 
+    #[test]
+    fn day9_heightmap_point_value() {
+        let heightmap_data = vec![2, 1, 9, 9, 9, 4, 3, 2, 1, 0,
+                                  3, 9, 8, 7, 8, 9, 4, 9, 2, 1,
+                                  9, 8, 5, 6, 7, 8, 9, 8, 9, 2,
+                                  8, 7, 6, 7, 8, 9, 6, 7, 8, 9,
+                                  9, 8, 9, 9, 9, 6, 5, 6, 7, 8];
+        let number_columns = 10;
+        let heightmap: Heightmap = Heightmap::new(&heightmap_data, number_columns);
+        assert_eq!(2, heightmap.value(Point::new(0, 0, 0)));
+        assert_eq!(1, heightmap.value(Point::new(1, 0, 0)));
+        assert_eq!(3, heightmap.value(Point::new(0, 1, 0)));
+        assert_eq!(9, heightmap.value(Point::new(1, 1, 0)));
+    }
 }
