@@ -17,13 +17,28 @@ pub fn puzzle() {
     }
     let heightmap: Heightmap = Heightmap::new(&heightmap_data, number_columns);
     let low_points = low_points(&heightmap_data, number_columns);
-    println!("Low points: {:?}", low_points);
+    //println!("Low points: {:?}", low_points);
     let values: Vec<i32> = heightmap.point_values(&low_points);
-    println!("values: {:?}", values);
+    //println!("values: {:?}", values);
     let risk_levels: Vec<i32> = values.iter().map(|value| value + 1).collect();
     let risk_level_sum: i32 = risk_levels.iter().sum();
-    println!("risk levels: {:?}", risk_levels);
+    //println!("risk levels: {:?}", risk_levels);
     println!("risk level sum: {}", risk_level_sum);
+
+    let basins: Vec<Vec<Point>> = low_points.iter().map(|point| heightmap.basin(point)).collect();
+    println!("Number of basins: {}", basins.len());
+    println!("First one: {:?}", basins[0]);
+    let mut basin_sizes: Vec<usize> = basins.iter().map(|basin| basin.len()).collect();
+    basin_sizes.sort();
+    let len = basin_sizes.len();
+    // I got lazy and computed the product of the largest basin sizes by hand
+    // But I wanted to learn how to slice part of a vector out, e.g. is there
+    // syntax for the last three elements of a vector? This doesn't work:
+    // basin_sizes[(len-3)..len]
+    // because the size of [usize] cannot be known at compile time. Oh, this works:
+    let largest_three = &basin_sizes[(len-3)..len];
+    println!("basin_sizes: {:?}", largest_three);
+    println!("product of three largest basins sizes: {}", largest_three.iter().product::<usize>());
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
