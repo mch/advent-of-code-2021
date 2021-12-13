@@ -121,6 +121,75 @@ fn narrow_candidates(candidates: &mut Vec<String>, item: &str) {
     };
 }
 
+/**
+ * Map the unique entries to digits from 0 to 9.
+ */
+fn find_mapping_tamaras_way(patterns: &Vec<&str>) -> HashMap<String, i32> {
+    let mut candidates: HashMap<String, Vec<i32>> = HashMap::new();
+    patterns.iter().for_each(|pattern| {
+        candidates.insert((*pattern).to_string(), (0..10).collect());
+    });
+
+    // Narrow candidates based on length
+    for (pattern, items) in &mut candidates {
+        match pattern.len() {
+            2 => {
+                items.clear();
+                items.push(1);
+            },
+            3 => {
+                items.clear();
+                items.push(7);
+            },
+            4 => {
+                items.clear();
+                items.push(4);
+            },
+            7 => {
+                items.clear();
+                items.push(8);
+            },
+            _ => {
+                items.remove(items.iter().position(|&x| x == 1).unwrap());
+                items.remove(items.iter().position(|&x| x == 7).unwrap());
+                items.remove(items.iter().position(|&x| x == 4).unwrap());
+                items.remove(items.iter().position(|&x| x == 8).unwrap());
+            }
+        }
+    }
+    println!("Candidates: {:?}", candidates);
+
+    // Narrow candidates based on shared segments and number of segments
+    // Digit, num segments, segments
+    // 1, 2, cf
+    // 7, 3, acf
+    // 4, 4, bcdf
+    // 2, 5, acdeg
+    // 3, 5, acdfg
+    // 5, 5, abdfg
+    // 0, 6, abcefg
+    // 6, 6, abdefg
+    // 9, 6, abcdfg
+    // 8, 7, abcdefg
+    //
+    // Segment: digits that use it
+    // a: 0, 2, 3, 5, 6, 7, 8, 9
+    // b: 0, 4, 5, 6, 8, 9
+    // c: 0, 1, 2, 3, 4, 7, 8, 9
+    // d: 2, 3, 4, 5, 6, 8, 9
+    // e: 0, 2, 6, 8
+    // f: 0, 1, 3, 4, 5, 6, 7, 8, 9
+    // g: 0, 2, 3, 5, 6, 8, 9
+    //
+    // From 1 and 7, we know what segment is the top, a.
+    //
+    // 2 and 5 use one of c or f, and 1 uses both c and f.
+    // 0 and 4 both use bcf, but only 0 uses aeg
+
+    let mut mapping: HashMap<String, i32> = HashMap::new();
+    mapping
+}
+
 // The lifetime parameter 'a says that the &str references in the vectors
 // must live at least as long as the Entry.
 #[derive(Debug, PartialEq)]
@@ -231,5 +300,18 @@ mod tests {
 
         candidates[1].retain(|segment| !item.contains(segment));
         assert_eq!("cdefg", candidates[1]);
+    }
+
+    #[test]
+    fn day8_find_mapping() {
+        let line = "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf";
+        let entry = parse_line(line);
+        let mut expected_mapping = HashMap::new();
+        expected_mapping.insert("ab", 1);
+        expected_mapping.insert("dab", 7);
+        expected_mapping.insert("eafb", 4);
+        expected_mapping.insert("acedgfb", 8);
+        let result = find_mapping_tamaras_way(&entry.patterns);
+        //assert_eq!(expected_mapping, result);
     }
 }
