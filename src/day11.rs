@@ -9,8 +9,16 @@ fn octopus_step(octopuses: &mut Grid) {
 
     // flash
     // track points which have flashed
-    let flashes: Vec<Point> = Vec::new();
-    for 
+    let mut flashes: Vec<Point> = Vec::new();
+
+    // I'm not sure why octopuses is being moved into the for loop or why I can't
+    // use for point in &octopuses...
+    for point in octopuses {
+        let energy = octopuses.value(&point);
+        if energy > 9 {
+            flashes.push(point);
+        }
+    }
     // while any octos that have not flashed have energy level > 9
     // increment energy of all neighbours
     // add to flash list

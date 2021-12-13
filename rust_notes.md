@@ -109,3 +109,5 @@ Or perhaps extract a more generic struct that Heightmap uses internally to provi
 
 ## Is there a way to assert the contents of a list, without caring about order?
 Maybe just use a set type?
+
+## Why does IntoIterator::into_iter take self without &?

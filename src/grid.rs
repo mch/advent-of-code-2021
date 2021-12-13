@@ -20,27 +20,6 @@ pub struct Grid {
     height: usize
 }
 
-pub struct GridIter {
-    index: usize,
-    width: usize,
-    number_of_points: usize,
-}
-
-impl Iterator for GridIter {
-    type Item = Point;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let current = self.index;
-        self.index += 1;
-
-        if current < self.number_of_points {
-            Some(Point::new(current % self.width, current / self.width))
-        } else {
-            None
-        }
-    }
-}
-
 impl Grid {
     pub fn new(data: &Vec<i32>, width: usize, height: usize) -> Grid {
         // What should new do if the inputs are inconsistent? E.g. data doesn't have enough points
@@ -49,14 +28,6 @@ impl Grid {
             data: data.clone(),
             width,
             height
-        }
-    }
-
-    pub fn iter(self: &Grid) -> GridIter {
-        GridIter {
-            index: 0,
-            width: self.width,
-            number_of_points: self.width * self.height,
         }
     }
 
@@ -113,13 +84,73 @@ impl Grid {
     }
 }
 
+impl IntoIterator for Grid {
+    type Item = Point;
+    type IntoIter = GridIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        GridIter {
+            index: 0,
+            width: self.width,
+            number_of_points: self.width * self.height,
+        }
+    }
+}
+
+impl IntoIterator for &Grid {
+    type Item = Point;
+    type IntoIter = GridIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        GridIter {
+            index: 0,
+            width: self.width,
+            number_of_points: self.width * self.height,
+        }
+    }
+}
+
+impl IntoIterator for &mut Grid {
+    type Item = Point;
+    type IntoIter = GridIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        GridIter {
+            index: 0,
+            width: self.width,
+            number_of_points: self.width * self.height,
+        }
+    }
+}
+
+pub struct GridIter {
+    index: usize,
+    width: usize,
+    number_of_points: usize,
+}
+
+impl Iterator for GridIter {
+    type Item = Point;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let current = self.index;
+        self.index += 1;
+
+        if current < self.number_of_points {
+            Some(Point::new(current % self.width, current / self.width))
+        } else {
+            None
+        }
+    }
+}
+
 mod tests {
     use super::*;
 
     #[test]
     fn grid_iterator() {
         let grid = Grid::new(&vec![0, 1, 2, 3], 2, 2);
-        let mut i = grid.iter();
+        let mut i = grid.into_iter();
         assert_eq!(Some(Point::new(0, 0)), i.next());
         assert_eq!(Some(Point::new(1, 0)), i.next());
         assert_eq!(Some(Point::new(0, 1)), i.next());
