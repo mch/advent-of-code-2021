@@ -13,7 +13,7 @@ fn octopus_step(octopuses: &mut Grid) {
 
     // I'm not sure why octopuses is being moved into the for loop or why I can't
     // use for point in &octopuses...
-    for point in octopuses {
+    for point in octopuses.iter_mut() {
         let energy = octopuses.value(&point);
         if energy > 9 {
             flashes.push(point);

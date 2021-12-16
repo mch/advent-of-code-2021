@@ -82,6 +82,22 @@ impl Grid {
 
         neighbours
     }
+
+    pub fn iter(&self) -> GridIter {
+        GridIter {
+            index: 0,
+            width: self.width,
+            number_of_points: self.width * self.height,
+        }
+    }
+
+    pub fn iter_mut(&mut self) -> GridIter {
+        GridIter {
+            index: 0,
+            width: self.width,
+            number_of_points: self.width * self.height,
+        }
+    }
 }
 
 impl IntoIterator for Grid {
@@ -89,11 +105,7 @@ impl IntoIterator for Grid {
     type IntoIter = GridIter;
 
     fn into_iter(self) -> Self::IntoIter {
-        GridIter {
-            index: 0,
-            width: self.width,
-            number_of_points: self.width * self.height,
-        }
+        self.iter()
     }
 }
 
@@ -115,11 +127,7 @@ impl IntoIterator for &mut Grid {
     type IntoIter = GridIter;
 
     fn into_iter(self) -> Self::IntoIter {
-        GridIter {
-            index: 0,
-            width: self.width,
-            number_of_points: self.width * self.height,
-        }
+        self.iter_mut()
     }
 }
 
