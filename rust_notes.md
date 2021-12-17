@@ -111,3 +111,7 @@ Or perhaps extract a more generic struct that Heightmap uses internally to provi
 Maybe just use a set type?
 
 ## Why does IntoIterator::into_iter take self without &?
+I think it is because self has the type Self, which depends on the type IntoIterator is templated on, which already includes the &?
+
+## How do closures capture scope and how to I control mutable vs immutable borrowing?
+See day11.

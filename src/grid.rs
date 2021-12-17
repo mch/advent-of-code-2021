@@ -1,11 +1,11 @@
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Point {
     x: usize,
     y: usize,
 }
 
 impl Point {
-    fn new(x: usize, y: usize) -> Point {
+    pub fn new(x: usize, y: usize) -> Point {
         Point {
             x, y
         }
