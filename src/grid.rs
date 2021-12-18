@@ -1,3 +1,5 @@
+use std::fmt::{self, Display};
+
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Point {
     x: usize,
@@ -12,6 +14,7 @@ impl Point {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub struct Grid {
     // Currently clones incoming data, maybe with a lifelife parameter it could reference the
     // original data, or just move it in?
@@ -151,6 +154,21 @@ impl Iterator for GridIter {
         }
     }
 }
+
+impl Display for Grid {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        for j in 0..self.height {
+            for i in 0..self.width {
+                write!(f, "{}", self.data[i + j * self.width])?;
+            }
+            write!(f, "\n")?;
+        }
+        Ok(())
+    }
+}
+
+//impl Debug for Grid {
+//}
 
 mod tests {
     use super::*;

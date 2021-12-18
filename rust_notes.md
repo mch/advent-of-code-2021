@@ -115,3 +115,6 @@ I think it is because self has the type Self, which depends on the type IntoIter
 
 ## How do closures capture scope and how to I control mutable vs immutable borrowing?
 See day11.
+
+## How do I implement printing of a struct?
+Implement the `std::fmt::Display` trait. Use `write!()?;` to return early if there is a write error.
