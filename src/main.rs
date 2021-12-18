@@ -11,6 +11,7 @@ mod day8;
 mod day9;
 mod day10;
 mod day11;
+mod day12;
 mod grid;
 
 fn main() -> () {
@@ -27,6 +28,7 @@ fn main() -> () {
     solutions.push(Box::new(day9::puzzle));
     solutions.push(Box::new(day10::puzzle));
     solutions.push(Box::new(day11::puzzle));
+    solutions.push(Box::new(day12::puzzle));
 
     let args: Vec<String> = env::args().collect();
     if args.len() == 1 {
