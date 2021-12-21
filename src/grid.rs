@@ -2,8 +2,8 @@ use std::fmt::{self, Display};
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Point {
-    x: usize,
-    y: usize,
+    pub x: usize,
+    pub y: usize,
 }
 
 impl Point {
@@ -42,6 +42,11 @@ impl Grid {
     // Should probably return an Option, for out of bounds points
     pub fn value(self: &Grid, point: &Point) -> i32 {
         self.data[self.index(point)]
+    }
+
+    pub fn set_value(self: &mut Grid, point: &Point, value: i32) {
+        let index = self.index(point);
+        self.data[index] = value;
     }
 
     pub fn values(self: &Grid, points: &Vec<Point>) -> Vec<i32> {

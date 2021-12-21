@@ -63,6 +63,31 @@ struct Fold {
     position: usize,
 }
 
+fn convert_dots_to_grid(dots: &Vec<Point>) -> Grid {
+    // Find grid size
+    let mut size = Point::new(0, 0);
+    for point in dots.iter() {
+        if point.x > size.x {
+            size.x = point.x;
+        }
+        if point.y > size.y {
+            size.y = point.y
+        }
+    }
+    println!("Grid size: {:?}", size);
+
+    // Grid evidently needs to be able to be created without a data arg...
+    let placeholder: Vec<i32> = vec![0; ((size.x + 1) * (size.y + 1))];
+    println!("Placeholder: {:?}", placeholder);
+    let mut grid = Grid::new(&placeholder, size.x + 1, size.y + 1);
+    // Create grid object
+    for point in dots.iter() {
+        println!("Setting point {:?}", point);
+        grid.set_value(point, 1);
+    }
+    grid
+}
+
 mod tests {
     use super::*;
 
@@ -81,5 +106,19 @@ mod tests {
         let expected =
             vec![Fold { axis: Axis::Y, position: 7 }, Fold { axis: Axis::X, position: 5}];
         assert_eq!(expected, folds);
+    }
+
+    #[test]
+    fn day13_positions_to_grid() {
+        let input = "6,10\n0,14\n9,10\n\n";
+        let dots = parse_dot_positions(&mut input.lines());
+        let grid = convert_dots_to_grid(&dots);
+        let mut expected_data = vec![0; 10*15];
+        expected_data[106] = 1;
+        expected_data[140] = 1;
+        expected_data[109] = 1;
+        let expected = Grid::new(&expected_data, 10, 15);
+        println!("{}", expected);
+        assert_eq!(expected, grid);
     }
 }
