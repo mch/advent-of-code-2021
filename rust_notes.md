@@ -118,3 +118,6 @@ See day11.
 
 ## How do I implement printing of a struct?
 Implement the `std::fmt::Display` trait. Use `write!()?;` to return early if there is a write error.
+
+## Whats the "right" way to handle Result and Option types without unwrap() all the time?
+Properly handling errors in general.
