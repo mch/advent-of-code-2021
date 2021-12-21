@@ -19,8 +19,8 @@ pub struct Grid {
     // Currently clones incoming data, maybe with a lifelife parameter it could reference the
     // original data, or just move it in?
     pub data: Vec<i32>, // pub for now...
-    width: usize,
-    height: usize
+    pub width: usize,
+    pub height: usize
 }
 
 impl Grid {
