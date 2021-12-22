@@ -1,4 +1,6 @@
-use petgraph::Graph;
+use petgraph::{Graph, Undirected};
+use petgraph::algo::dijkstra::dijkstra;
+use petgraph::algo::simple_paths::all_simple_paths;
 
 pub fn puzzle() {
     // Load cave connectivity graph
@@ -55,7 +57,23 @@ mod tests {
 
     #[test]
     fn day12_test_petgraph() {
-        let mut graph = Graph::<&str, &str>::new();
-
+        let mut graph = Graph::<&str, ()>::new();
+        let start_node = graph.add_node("start");
+        let c_node = graph.add_node("c");
+        let A_node = graph.add_node("A");
+        let b_node = graph.add_node("b");
+        let d_node = graph.add_node("d");
+        let end_node = graph.add_node("end");
+        graph.add_edge(start_node, A_node, ());
+        graph.add_edge(start_node, b_node, ());
+        graph.add_edge(A_node, c_node, ());
+        graph.add_edge(A_node, b_node, ());
+        graph.add_edge(b_node, d_node, ());
+        graph.add_edge(A_node, end_node, ());
+        graph.add_edge(b_node, end_node, ());
+        let result = all_simple_paths::<Vec<_>, _>(&graph, start_node, end_node, 1, None);
+        for item in result {
+            println!("{:?}", item);
+        }
     }
 }
