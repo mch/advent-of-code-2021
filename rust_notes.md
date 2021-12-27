@@ -116,8 +116,28 @@ I think it is because self has the type Self, which depends on the type IntoIter
 ## How do closures capture scope and how to I control mutable vs immutable borrowing?
 See day11.
 
+Maybe the `move` keyword to create a move closure?
+
+What does `drop(v);` do?
+
 ## How do I implement printing of a struct?
 Implement the `std::fmt::Display` trait. Use `write!()?;` to return early if there is a write error.
 
 ## Whats the "right" way to handle Result and Option types without unwrap() all the time?
 Properly handling errors in general.
+
+## In petgraph algo, what does where mean?
+```
+pub fn dijkstra<G, F, K>(
+    graph: G,
+    start: G::NodeId,
+    goal: Option<G::NodeId>,
+    mut edge_cost: F,
+) -> HashMap<G::NodeId, K>
+where
+    G: IntoEdges + Visitable,
+    G::NodeId: Eq + Hash,
+    F: FnMut(G::EdgeRef) -> K,
+    K: Measure + Copy,
+{
+```
