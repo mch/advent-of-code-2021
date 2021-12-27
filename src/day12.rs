@@ -1,7 +1,7 @@
 use petgraph::{Graph, Undirected};
-use petgraph::{IntoEdges, Visitable};
 use petgraph::algo::dijkstra::dijkstra;
 use petgraph::algo::simple_paths::all_simple_paths;
+use std::collections::HashSet; 
 
 pub fn puzzle() {
     // Load cave connectivity graph
@@ -93,19 +93,65 @@ mod tests {
 
     #[test]
     fn day12_test_two_connected_caves() {
-        let mut graph = Graph::<&str, ()>::new();
-        let start_node = graph.add_node("start");
-        let end_node = graph.add_node("end");
-        graph.add_edge(start_node, end_node, ());
-        let num_paths = number_of_distinct_paths(&graph, &start_node, &end_node);
+        let mut graph = Vec::new();
+        graph.push(("start", "end"));
+        let num_paths = number_of_distinct_paths(&graph, String::from("start"), String::from("end"));
         assert_eq!(1, num_paths);
     }
+
+    #[test]
+    fn day12_test_diamond_shape_caves() {
+        let mut graph = Vec::new();
+        graph.push(("start", "a"));
+        graph.push(("a", "end"));
+
+        graph.push(("start", "b"));
+        graph.push(("b", "end"));
+        let num_paths = number_of_distinct_paths(&graph, String::from("start"), String::from("end"));
+        assert_eq!(2, num_paths);
+    }
+
 }
 
-fn number_of_distinct_paths<G>(graph: G, start: G::NodeId, end: G::NodeId) -> usize
-where
-    G: IntoEdges + Visitable,
-    G::NodeId: Eq + Hash
+fn number_of_distinct_paths(graph: &Vec::<(&str, &str)>, start: String, end: String) -> usize
 {
-    0
+    let mut unvisited_nodes = Vec::new();
+    let mut discovered_nodes = Vec::new();
+    let mut paths = Vec::new();
+    let mut current_path = Vec::new();
+
+    unvisited_nodes.push(start);
+    //add_single_path_single_node(start);
+    //current_path.push(start);
+    while unvisited_nodes.len() > 0 {
+        let discovered_node = unvisited_nodes.pop().unwrap();
+        if !discovered_nodes.contains(&discovered_node) {
+            discovered_nodes.push(discovered_node.clone());
+            //add_this_discovered_node_to_all_of_the_paths
+            current_path.push(discovered_node.clone());
+            if discovered_node == end {
+                paths.push(current_path);
+                current_path
+            }
+            let adj_nodes = adjacent_edges(&graph, discovered_node);
+            for node in adj_nodes {
+                unvisited_nodes.push(node)
+            }
+        }
+    }
+
+    graph.len()
+}
+
+fn adjacent_edges(graph: &Vec::<(&str, &str)>, node: String) -> HashSet<String> {
+    let mut adj_edges = HashSet::new();
+    for (node_a, node_b) in graph {
+        if *node_a == node {
+            adj_edges.insert(String::from(*node_b));
+        }
+        if *node_b == node {
+            adj_edges.insert(String::from(*node_a));
+        }
+    }
+    adj_edges
 }
