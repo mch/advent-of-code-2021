@@ -80,17 +80,25 @@ mod tests {
         assert_eq!(vec!["start", "end"], paths[0]);
     }
 
-    // #[test]
-    // fn day12_test_diamond_shape_caves() {
-    //     let mut graph = Vec::new();
-    //     graph.push(("start", "a"));
-    //     graph.push(("a", "end"));
+    #[test]
+    fn day12_test_diamond_shape_caves() {
+        //  start
+        // /    \
+        // a     b
+        // \    /
+        //   end
+        let mut graph = Vec::new();
+        graph.push(("start", "a"));
+        graph.push(("a", "end"));
 
-    //     graph.push(("start", "b"));
-    //     graph.push(("b", "end"));
-    //     let num_paths = find_paths(&graph, String::from("start"), String::from("end"));
-    //     assert_eq!(2, num_paths);
-    // }
+        graph.push(("start", "b"));
+        graph.push(("b", "end"));
+        let paths = find_paths(&graph, String::from("start"), String::from("end"));
+        assert_eq!(2, paths.len());
+        assert!(paths.contains(&vec![String::from("start"), String::from("a"), String::from("end")]));
+        assert!(paths.contains(&vec![String::from("start"), String::from("b"), String::from("end")]));
+        // rust retro: how can we avoid String::from everywhere
+    }
 
     //   s---
     //  / \  \
