@@ -123,14 +123,29 @@ mod tests {
     // s (already visited a) b e
     //
     //
+
+    //   s
+    //  / \
+    // a   b--c
+    //  \ /
+    //   e
+    //
+    // Paths:
+    // s,a,e
+    // s,b,e
+    // s,b,c,b,e
+
 }
 
 fn number_of_distinct_paths(graph: &Vec::<(&str, &str)>, start: String, end: String) -> usize
 {
+    let mut final_list_of_paths: Vec<Vec<String>> = Vec::new();
+
+    let mut paths: Vec<Vec<String>> = Vec::new();
+    let mut current_path: Vec<String> = Vec::new();
+
     let mut unvisited_nodes = Vec::new();
     let mut discovered_nodes = Vec::new();
-    let mut paths = Vec::new();
-    let mut current_path = Vec::new();
 
     unvisited_nodes.push(start);
     //add_single_path_single_node(start);
@@ -142,6 +157,7 @@ fn number_of_distinct_paths(graph: &Vec::<(&str, &str)>, start: String, end: Str
             //add_this_discovered_node_to_all_of_the_paths
             current_path.push(discovered_node.clone());
             if discovered_node == end {
+                // copy all paths to final list of paths
                 paths.push(current_path);
                 current_path
             }
@@ -152,7 +168,7 @@ fn number_of_distinct_paths(graph: &Vec::<(&str, &str)>, start: String, end: Str
         }
     }
 
-    graph.len()
+    final_list_of_paths.len()
 }
 
 fn adjacent_edges(graph: &Vec::<(&str, &str)>, node: String) -> HashSet<String> {
