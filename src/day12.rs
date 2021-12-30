@@ -11,28 +11,6 @@ pub fn puzzle() {
     // Visit small caves only once
 }
 
-fn find_paths(graph: &Vec<Edge>, start: &str, end: &str) -> Vec<Path> {
-    let mut paths: Vec<Path> = Vec::new();
-
-    // Find the number of paths distinct paths from 'start' to 'end
-    // Don't visit small caves more than once.
-    // Big caves are upper case
-    // Small caves are lowercase
-
-    // Keep a list of paths
-    // The current path
-
-    // Save list of nodes to visit next
-    // Keep track of visited nodes
-    // for each adjacent node {
-    // if small, skip
-    // add connected nodes to list of nodes to visit next
-    //
-
-
-    paths
-}
-
 struct Path {
 }
 
@@ -50,25 +28,25 @@ impl<'a> Edge<'a> {
 mod tests {
     use super::*;
 
-    #[test]
-    fn day12_no_path_through_empty_cave() {
-        let mut graph = Vec::new();
+    // #[test]
+    // fn day12_no_path_through_empty_cave() {
+    //     let mut graph = Vec::new();
 
-        let paths = find_paths(&graph, &"start", &"end");
+    //     let paths = find_paths(&graph, &"start", &"end");
 
-        assert_eq!(0, paths.len())
-    }
+    //     assert_eq!(0, paths.len())
+    // }
 
-    #[test]
-    fn day12_cave_paths() {
-        let mut graph = Vec::new();
-        graph.push(Edge::new("start", "A"));
-        graph.push(Edge::new("A", "end"));
+    // #[test]
+    // fn day12_cave_paths() {
+    //     let mut graph = Vec::new();
+    //     graph.push(Edge::new("start", "A"));
+    //     graph.push(Edge::new("A", "end"));
 
-        let paths = find_paths(&graph, &"start", &"end");
+    //     let paths = find_paths(&graph, &"start", &"end");
 
-        assert_eq!(1, paths.len())
-    }
+    //     assert_eq!(1, paths.len())
+    // }
 
 
     #[test]
@@ -97,21 +75,22 @@ mod tests {
     fn day12_test_two_connected_caves() {
         let mut graph = Vec::new();
         graph.push(("start", "end"));
-        let num_paths = number_of_distinct_paths(&graph, String::from("start"), String::from("end"));
-        assert_eq!(1, num_paths);
+        let paths = find_paths(&graph, String::from("start"), String::from("end"));
+        assert_eq!(1, paths.len());
+        assert_eq!(vec!["start", "end"], paths[0]);
     }
 
-    #[test]
-    fn day12_test_diamond_shape_caves() {
-        let mut graph = Vec::new();
-        graph.push(("start", "a"));
-        graph.push(("a", "end"));
+    // #[test]
+    // fn day12_test_diamond_shape_caves() {
+    //     let mut graph = Vec::new();
+    //     graph.push(("start", "a"));
+    //     graph.push(("a", "end"));
 
-        graph.push(("start", "b"));
-        graph.push(("b", "end"));
-        let num_paths = number_of_distinct_paths(&graph, String::from("start"), String::from("end"));
-        assert_eq!(2, num_paths);
-    }
+    //     graph.push(("start", "b"));
+    //     graph.push(("b", "end"));
+    //     let num_paths = find_paths(&graph, String::from("start"), String::from("end"));
+    //     assert_eq!(2, num_paths);
+    // }
 
     //   s---
     //  / \  \
@@ -127,9 +106,10 @@ mod tests {
     //   s
     //  / \
     // a   b--c
-    //  \ /
+    // | \    \ /
+    // d  f   g
+    //  \ /  /
     //   e
-    //
     // Paths:
     // s,a,e
     // s,b,e
@@ -137,7 +117,7 @@ mod tests {
 
 }
 
-fn number_of_distinct_paths(graph: &Vec::<(&str, &str)>, start: String, end: String) -> usize
+fn find_paths(graph: &Vec::<(&str, &str)>, start: String, end: String) -> Vec<Vec<String>>
 {
     let mut final_list_of_paths: Vec<Vec<String>> = Vec::new();
 
@@ -157,9 +137,10 @@ fn number_of_distinct_paths(graph: &Vec::<(&str, &str)>, start: String, end: Str
             //add_this_discovered_node_to_all_of_the_paths
             current_path.push(discovered_node.clone());
             if discovered_node == end {
-                // copy all paths to final list of paths
-                paths.push(current_path);
-                current_path
+                // copy all paths that has start and end to final list of paths
+                // can only push this adjacent node to the path that has the discovered node
+                paths.push(current_path.clone());
+                //current_path
             }
             let adj_nodes = adjacent_edges(&graph, discovered_node);
             for node in adj_nodes {
@@ -167,8 +148,26 @@ fn number_of_distinct_paths(graph: &Vec::<(&str, &str)>, start: String, end: Str
             }
         }
     }
+    // "start", "A", "B", "C", "end"
+    // iter 1 -> "start"
+    // iter 2 -> ["start", "A"], ["start", "B"]
+    // iter 3 -> ["start", "A", "end"], ["start", "B", "end"]
 
-    final_list_of_paths.len()
+    // Find the number of paths distinct paths from 'start' to 'end
+    // Don't visit small caves more than once.
+    // Big caves are upper case
+    // Small caves are lowercase
+
+    // Keep a list of paths
+    // The current path
+
+    // Save list of nodes to visit next
+    // Keep track of visited nodes
+    // for each adjacent node {
+    // if small, skip
+    // add connected nodes to list of nodes to visit next
+
+    paths
 }
 
 fn adjacent_edges(graph: &Vec::<(&str, &str)>, node: String) -> HashSet<String> {
