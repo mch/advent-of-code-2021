@@ -1,7 +1,9 @@
 use petgraph::{Graph, Undirected};
+use petgraph::visit::{IntoEdges, Visitable};
+use std::hash::Hash;
 use petgraph::algo::dijkstra::dijkstra;
 use petgraph::algo::simple_paths::all_simple_paths;
-use std::collections::HashSet; 
+use std::collections::HashSet;
 
 pub fn puzzle() {
     // Load cave connectivity graph
@@ -25,7 +27,7 @@ fn find_paths(graph: &Vec<Edge>, start: &str, end: &str) -> Vec<Path> {
     // for each adjacent node {
     // if small, skip
     // add connected nodes to list of nodes to visit next
-    // 
+    //
 
 
     paths
@@ -111,6 +113,16 @@ mod tests {
         assert_eq!(2, num_paths);
     }
 
+    //   s---
+    //  / \  \
+    // a   b  c
+    //  \ /  /
+    //   e---
+    //
+    // s a e
+    // s (already visited a) b e
+    //
+    //
 }
 
 fn number_of_distinct_paths(graph: &Vec::<(&str, &str)>, start: String, end: String) -> usize

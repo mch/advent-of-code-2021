@@ -141,3 +141,8 @@ where
     K: Measure + Copy,
 {
 ```
+
+## What is the type of the tuple elements?
+```
+
+```
