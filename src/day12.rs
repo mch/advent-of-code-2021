@@ -87,6 +87,8 @@ mod tests {
         // a     b
         // \    /
         //   end
+        // paths: [start, a], [start, b]
+
         let mut graph = Vec::new();
         graph.push(("start", "a"));
         graph.push(("a", "end"));
@@ -130,36 +132,97 @@ fn find_paths(graph: &Vec::<(&str, &str)>, start: String, end: String) -> Vec<Ve
     let mut final_list_of_paths: Vec<Vec<String>> = Vec::new();
 
     let mut paths: Vec<Vec<String>> = Vec::new();
-    let mut current_path: Vec<String> = Vec::new();
 
     let mut unvisited_nodes = Vec::new();
     let mut discovered_nodes = Vec::new();
 
-    unvisited_nodes.push(start);
-    //add_single_path_single_node(start);
-    //current_path.push(start);
+    unvisited_nodes.push((start.clone(), start.clone()));
+    paths.push(vec![start.clone()]);
+
+    println!("paths: {:?}", paths);
+    println!("unvisited_nodes: {:?}", unvisited_nodes);
+    println!("discovered_node: {:?}", discovered_nodes);
+
     while unvisited_nodes.len() > 0 {
-        let discovered_node = unvisited_nodes.pop().unwrap();
+        let (previous_node, discovered_node) = unvisited_nodes.pop().unwrap();
         if !discovered_nodes.contains(&discovered_node) {
             discovered_nodes.push(discovered_node.clone());
-            //add_this_discovered_node_to_all_of_the_paths
-            current_path.push(discovered_node.clone());
-            if discovered_node == end {
-                // copy all paths that has start and end to final list of paths
-                // can only push this adjacent node to the path that has the discovered node
-                paths.push(current_path.clone());
-                //current_path
+
+            for path in paths.iter_mut() {
+                if path[path.len() - 1] == previous_node {
+                    path.push(discovered_node.clone());
+                }
             }
-            let adj_nodes = adjacent_edges(&graph, discovered_node);
-            for node in adj_nodes {
-                unvisited_nodes.push(node)
+
+            if discovered_node == end {
+                // if current_path has start and end, and find path inside paths that is the same as
+                // current path, remove current path from paths and assign current path to be the
+                // next path in the path list
+                let mut new_paths: Vec<Vec<String>> = Vec::new();
+                for path in paths.iter() {
+                    if !(path[0] == start && path[path.len() - 1] == end) {
+                        new_paths.push(path.clone());
+                    } else {
+                        final_list_of_paths.push(path.clone());
+                    }
+                }
+                paths = new_paths;
+            }
+            let adj_nodes = adjacent_edges(&graph, discovered_node.clone());
+            for adj_node in adj_nodes {
+                unvisited_nodes.push((discovered_node.clone(), adj_node.clone()));
+                // find paths that end with discovered node and duplicate those paths for every
+                // adjacent node.
+                let mut new_paths: Vec<Vec<String>> = Vec::new();
+                for path in paths.iter() {
+                    if path[path.len() - 1] == discovered_node {
+                        let mut new_path = path.clone();
+                        new_path.push(adj_node.clone());
+                        new_paths.push(new_path);
+                    } else {
+                        new_paths.push(path.clone());
+                    }
+                }
+                paths = new_paths;
             }
         }
+        println!("paths: {:?}", paths);
+        println!("unvisited_nodes: {:?}", unvisited_nodes);
+        println!("discovered_node: {:?}", discovered_nodes);
     }
+
+    // Start
+    // /   \
+    // a    b
+    // |    |
+    // c    |
+    // \    /
+    //  end
+
+    // Start
+    // /
+    // a
+    // |
+    // c----b
+    // \    /
+    //  end
+
     // "start", "A", "B", "C", "end"
-    // iter 1 -> "start"
+    // iter 1 -> ["start"]
     // iter 2 -> ["start", "A"], ["start", "B"]
-    // iter 3 -> ["start", "A", "end"], ["start", "B", "end"]
+    // iter 3 -> ["start", "A", "C"], ["start", "B"]
+    // iter 4 -> ["start", "A", "C", "end"], ["start", "B"]
+    // iter 5 -> ["start", "B", "end"]
+
+    // current path
+    // "start"
+    // "start" "a"
+    // "start" "c"
+    // "start" "c" "end"
+    // current path added to paths
+    // backtrack along current path to find branch
+
+
 
     // Find the number of paths distinct paths from 'start' to 'end
     // Don't visit small caves more than once.
@@ -175,7 +238,7 @@ fn find_paths(graph: &Vec::<(&str, &str)>, start: String, end: String) -> Vec<Ve
     // if small, skip
     // add connected nodes to list of nodes to visit next
 
-    paths
+    final_list_of_paths
 }
 
 fn adjacent_edges(graph: &Vec::<(&str, &str)>, node: String) -> HashSet<String> {
